@@ -69,13 +69,17 @@ int main() {
 
     menu:
     system("cls");
-    cout << "1. Input Data Buku" << endl;
-    cout << "2. Daftar Buku Tersedia" << endl; 
-    cout << "3. Pencarian Buku " << endl;
-    cout << "4. Mengambil Nomor Antrian " << endl;
-    cout << "5. Peminjaman " << endl;
-    cout << "6. Pengembalian" << endl;
-    cout << "0. Keluar" << endl;
+	cout <<"============================================="<<endl;
+	cout <<"| NO |      MENU                            |"<<endl;
+	cout <<"============================================="<<endl;
+    cout <<" 1.	 Input Data Buku "<< endl;	
+    cout <<" 2.	 Daftar Buku Tersedia " << endl; 
+    cout <<" 3.	 Pencarian Buku	" << endl;
+    cout <<" 4.	 Mengambil Nomor Antrian " << endl;
+    cout <<" 5.	 Peminjaman	" << endl;
+    cout <<" 6.	 Pengembalian " << endl;
+    cout <<" 0.	 Keluar " << endl;
+	cout<<"=============================================="<<endl;
     cout << "Masukkkan Menu : " ; cin >> pilihan;
 
     if (pilihan == 1 ) {
@@ -214,7 +218,7 @@ void inputbuku(databuku& b1) {
 	cout<<"Masukan judul buku : ";
 	getline(cin, b1.judulbuku);
 	cout<<"Masukan nama pengarang : ";
-	cin>>b1.namapengarang;
+	getline(cin, b1.namapengarang);
 	cout<<"Masukan tahun terbit : ";
 	cin>>b1.thterbit;
 	cout<<"Masukan Buku yang tersedia : ";
@@ -342,7 +346,7 @@ void caridanTampilBuku(const databuku b1[], int temp, const string& cariBuku) {
 	int indeksBuku = -1;
 
     for (int i = 0; i < temp; ++i) {
-        if (b1[i].judulbuku == cariBuku) {
+        if (b1[i].judulbuku.find(cariBuku) != string::npos) {
             indeksBuku = i;
             break;
         }
@@ -390,3 +394,4 @@ void peminjamanbuku(queuepinjam& q, databuku b1[], int temp) {
 	
             
 }
+
