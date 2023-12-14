@@ -1,5 +1,7 @@
 #include <iostream>
 #include <unistd.h>
+#include <cstdlib>
+#include <iomanip>
 
 using namespace std;
 
@@ -113,6 +115,14 @@ int main() {
     
         caridanTampilBuku(b1, temp, cariBuku);
 		
+		cout << "-------------------" << endl;
+		cout << "1. Kembali ke menu utama " << endl;
+		int pil3;
+		cout << "Input : " ; cin >>pil3;
+		if (pil3 == 1) {
+			goto menu;
+		} 
+
 	} else if (pilihan == 4) {
 		system("cls");
 		cout << "1. Mengambil Nomor Antrian Peminjaman " << endl;
@@ -242,8 +252,21 @@ void simpan(databuku b1[] , int& temp) {
 }
 
 void sortdatabuku(databuku b1[], int temp) {
-    cout << "|  Id  " << "| Judul |" <<"Nama Pengarang|" << " Tahun Terbit  |" <<endl;
-		for (int i = 0; i < temp - 1; i++) {
+	const int idWidth = 5;
+    const int judulWidth = 30;
+    const int pengarangWidth = 15;
+    const int tahunWidth = 13;
+    const int stokWidth = 7;
+
+	cout << setw(idWidth) << left << "|  Id  ";
+    cout << setw(judulWidth) << left << "| Judul ";
+    cout << setw(pengarangWidth) << left << "| Nama Pengarang";
+    cout << setw(tahunWidth) << left << "| Tahun Terbit  ";
+    cout << setw(stokWidth) << left << "| Stok  |" << endl;
+
+	cout << setw(idWidth + judulWidth + pengarangWidth + tahunWidth + stokWidth + 23) << setfill('-') << "-" << setfill(' ') << endl;
+
+    for (int i = 0; i < temp - 1; i++) {
     		for (int j = 0; j < temp - i - 1; j++) {
         			if (b1[j].idbuku > b1[j + 1].idbuku) {
             				databuku temp = b1[j];
@@ -253,8 +276,12 @@ void sortdatabuku(databuku b1[], int temp) {
 			}
 		}
 		for (int j = 0; j < temp; j++) {
-    		cout << "|  " <<b1[j].idbuku << " | "  << b1[j].judulbuku << " | "<< b1[j].namapengarang << " | " << b1[j].thterbit << " |" << b1[j].jumlahbuku << " |" << endl;
-		}
+    	cout << "|  " << setw(idWidth - 2) << left << b1[j].idbuku;
+        cout << "| " << setw(judulWidth - 1) << left << b1[j].judulbuku;
+        cout << "| " << setw(pengarangWidth - 1) << left << b1[j].namapengarang;
+        cout << "| " << setw(tahunWidth - 1) << left << b1[j].thterbit;
+        cout << "| " << setw(stokWidth - 1) << left << b1[j].jumlahbuku << " |" << endl;
+    }
 }
 
 void MasukAntrian(queuepinjam& q) {
@@ -362,36 +389,37 @@ void caridanTampilBuku(const databuku b1[], int temp, const string& cariBuku) {
 }
 
 void peminjamanbuku(queuepinjam& q, databuku b1[], int temp) {
+    int noantrian = !empty(q) ? q.nomor[0] : -1;
+    string namaantrian = !empty(q) ? q.namaanggota[0] : "Tidak Ada Antrian";
 
-	int noantrian = !empty(q) ? q.nomor[0] : -1;
-	string namaantrian = !empty(q) ? q.namaanggota[0] : "Tidak Ada Antrian";
+    if (noantrian != -1) {
+        cout << "Nomor Antrian Anda  : " << noantrian << endl;
+        cout << "Nama Antrian        : " << namaantrian << endl;
 
-	if (noantrian != -1) {
-		cout << "Nomor Antrian Anda  : " << noantrian << endl;
-		cout << "Nama Antrian        : " << namaantrian << endl;
-		cout << "Masukkan Buku yang Ingin Dipinjam (ID Buku) : ";
         int nobuku;
-        cin >> nobuku;
 
-        if (nobuku >= 1 && nobuku <= temp) {
-            if (b1[nobuku - 1].jumlahbuku > 0) {
-                q.bkPinjam[noantrian - 1] = &b1[nobuku - 1];
-                q.bkPinjam[noantrian - 1]->pinjam = true;
-                q.bkPinjam[noantrian - 1]->jumlahbuku--;
+            cout << "Masukkan ID Buku yang Ingin Dipinjam: ";
+            cin >> nobuku;
 
-				KeluarAntrian(q);
-
-                cout << "Buku yang ingin Anda pinjam BERHASIL DIPINJAM!" << endl;
-            } else {
-                cout << "Buku yang ingin Anda pinjam tidak tersedia!" << endl;
+            bool validID = false;
+            for (int i = 0; i < temp; ++i) {
+                if (b1[i].idbuku == nobuku && b1[i].jumlahbuku > 0) {
+                    validID = true;
+                    q.bkPinjam[noantrian - 1] = &b1[i];
+                    q.bkPinjam[noantrian - 1]->pinjam = true;
+                    q.bkPinjam[noantrian - 1]->jumlahbuku--;
+                    cout << "Buku ID " << nobuku << " berhasil dipinjam!" << endl;
+                    break;
+                }
             }
-            } else {
-                cout << "ID Buku yang Anda input tidak valid!" << endl;
+
+            if (!validID) {
+                cout << "ID Buku tidak valid atau buku tidak tersedia." << endl;
             }
-	} else {
-		cout << "Antrian kosong. Harap mengammbil nomer antrian terlebih dahulu." << endl;
-	}
-	
-            
+
+        KeluarAntrian(q);
+
+    } else {
+        cout << "Antrian kosong. Harap mengambil nomor antrian terlebih dahulu." << endl;
+    }
 }
-
